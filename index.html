@@ -597,8 +597,19 @@ async function copyCode(){
 
 let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200)}
 
+/* 연결 링크: …/evening-3h/#connect=<웹앱 URL>&key=<비밀번호> 를 한 번 열면 자동 연결 (# 뒤는 서버로 전송되지 않음) */
+function readConnectLink(){
+  if(!location.hash.startsWith('#connect='))return false;
+  const p=new URLSearchParams(location.hash.slice(1));
+  history.replaceState(null,'',location.pathname+location.search);
+  const url=p.get('connect')||'', key=p.get('key')||'';
+  if(!/^https:\/\/script\.google\.com\//.test(url))return false;
+  db.settings.url=url; db.settings.key=key; saveDB();
+  return true;
+}
+const viaLink=readConnectLink();
 renderAll();
-startupSync();
+if(viaLink)connect(); else startupSync();
 setInterval(()=>{if(!edK&&view==='week')renderAll()},60000);
 </script>
 </body>
